@@ -135,18 +135,20 @@ function find_dedicated(padsList){
 }
 
 //remove non-pps pins from master list 
-function cleanup_dedicated(padsList,nonPPSList){
+function cleanup_dedicated(padsList,nonPPSList,flag){
 	
-//	//First pass - remove dedicated pins
-//	for ( peripheral in padsList){
-//		for (functions in padsList[peripheral]){
-//			for (pins in padsList[peripheral][functions]){
-//				if(1==padsList[peripheral][functions].length){
-//					delete padsList[peripheral][functions]
-//				}	
-//			}
-//		}
-//	}
+	if(flag){
+		//First pass - remove dedicated pins
+		for ( peripheral in padsList){
+			for (functions in padsList[peripheral]){
+				for (pins in padsList[peripheral][functions]){
+					if(1==padsList[peripheral][functions].length){
+						delete padsList[peripheral][functions]
+					}	
+				}
+			}
+		}
+	}
 	
 	//second pass - remove pins from PPS groups
 	for ( peripheral in padsList){
@@ -170,4 +172,4 @@ function cleanup_dedicated(padsList,nonPPSList){
 
 x=find_pads_multi("UART1","HSSPI","HSUART","SPI2")
 y=find_dedicated(x)
-z=cleanup_dedicated(x,y)
+z=cleanup_dedicated(x,y,false)
