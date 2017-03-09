@@ -117,39 +117,57 @@ function find_pads(){
 }
 
 
-
-function cleanup_dedicated(padsList){
+//find non-PPS pins
+function find_dedicated(padsList){
 	var nonPPSList=[];
 	
 	for ( peripheral in padsList){
 		for (functions in padsList[peripheral]){
 			for (pins in padsList[peripheral][functions]){
 				if(1==padsList[peripheral][functions].length){
-					nonPPSList.push(padsList[peripheral][functions])
+					//delete padsList[peripheral][functions]
+					nonPPSList.push(padsList[peripheral][functions][0])
 				}	
 			}
 		}
 	}
+	return (nonPPSList)
+}
+
+//remove non-pps pins from master list 
+function cleanup_dedicated(padsList,nonPPSList){
 	
-//	for (i in nonPPSList){
-//		console.log(nonPPSList[i]);
+//	//First pass - remove dedicated pins
+//	for ( peripheral in padsList){
+//		for (functions in padsList[peripheral]){
+//			for (pins in padsList[peripheral][functions]){
+//				if(1==padsList[peripheral][functions].length){
+//					delete padsList[peripheral][functions]
+//				}	
+//			}
+//		}
 //	}
-
-
+	
+	//second pass - remove pins from PPS groups
 	for ( peripheral in padsList){
 		for (functions in padsList[peripheral]){
 			for (pins in padsList[peripheral][functions]){
-				if(1==padsList[peripheral][functions].length){
-					 //delete here
-					//nonPPSList.push(padsList[peripheral][functions])
-				}
-				//splice here
+				if(padsList[peripheral][functions].length>1){
+					//console.log(padsList[peripheral][functions])
+					for(i in nonPPSList){
+						index=padsList[peripheral][functions].indexOf(nonPPSList[i])
+						if(index>=0){
+							padsList[peripheral][functions].splice(index,1);
+						}
+					}
+				}	
 			}
 		}
 	}
-
-	
+	return (padsList)
 }
 
-x=find_pads_multi("ETH","UART1")
-cleanup_dedicated(x)
+
+x=find_pads_multi("UART1","HSSPI","HSUART","SPI2")
+y=find_dedicated(x)
+z=cleanup_dedicated(x,y)
